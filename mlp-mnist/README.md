@@ -1,31 +1,3 @@
-# PyTorch Deep Learning (Monorepo)
-
-This repository collects compact, well-documented PyTorch projects and experiments.
-
-Current projects:
-
-- `mlp-mnist/` — Multi-Layer Perceptron (MLP) for MNIST classification.
-
-Repository structure:
-
-```
-Pytorch-deep-learning/
-├── mlp-mnist/              # MLP MNIST project (code + notebook)
-├── cnn-efficientnet/       # (future) CNN experiments
-├── lstm-sentiment/         # (future) LSTM experiments
-└── LICENSE
-```
-
-How to use the monorepo:
-
-1. Enter a project folder, e.g. `cd mlp-mnist`
-2. Follow the project's `README.md` to run or train models
-
-If you want me to add the other folders (CNN, LSTM) now, tell me and I will scaffold them.
-
----
-
-_Created by cmhh22 — educational PyTorch projects and tutorials._
 # MLP MNIST - Multi-Layer Perceptron with PyTorch
 
 An educational and professional project implementing a **Multi-Layer Perceptron (MLP)** for MNIST digit classification using PyTorch.
