@@ -14,6 +14,7 @@
 |---------|-------------|---------|----------|-------------|
 | [**MLP-MNIST**](./MLP-MNIST) | Multi-Layer Perceptron | MNIST | ~98% | Handwritten digit classification with a 3-layer MLP |
 | [**CNN-EfficientNet**](./CNN-EfficientNet) | EfficientNet-B0 (Transfer Learning) | CIFAR-10 | ~98% | Image classification using pretrained CNN |
+| [**LSTM-Sentiment**](./LSTM-Sentiment) | Bidirectional LSTM + Attention | IMDB | ~88% | Sentiment analysis on movie reviews |
 
 ---
 
@@ -54,6 +55,13 @@ Pytorch-deep-learning/
 │   ├── main.py
 │   └── README.md
 │
+├── LSTM-Sentiment/         # 🎭 LSTM for Sentiment Analysis
+│   ├── models/
+│   ├── src/
+│   ├── notebooks/
+│   ├── main.py
+│   └── README.md
+│
 ├── LICENSE
 └── README.md               # 📖 This file
 ```
@@ -72,9 +80,14 @@ Pytorch-deep-learning/
 - Understand transfer learning
 - Apply pretrained models to new tasks
 
-### 3️⃣ Coming Soon
-- 🔜 RNN/LSTM for sequence data
+### 3️⃣ Learn LSTM-Sentiment
+- Understand recurrent neural networks
+- Learn sequence modeling with LSTMs
+- Implement attention mechanisms for interpretability
+
+### 4️⃣ Coming Soon
 - 🔜 Transformers for NLP
+- 🔜 GANs for image generation
 
 ---
 
@@ -94,6 +107,14 @@ Dataset: CIFAR-10 (50K train, 10K test)
 Architecture: EfficientNet-B0 (pretrained ImageNet)
 Test Accuracy: ~98%
 Training Time: ~10 min (GPU)
+```
+
+### LSTM-Sentiment
+```
+Dataset: IMDB Movie Reviews (50K reviews)
+Architecture: Bidirectional LSTM + Attention
+Test Accuracy: ~88%
+Training Time: ~15 min (GPU)
 ```
 
 ---
