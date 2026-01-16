@@ -151,7 +151,7 @@ class Vocabulary:
     @classmethod
     def load(cls, path: str) -> 'Vocabulary':
         """Load vocabulary from file."""
-        data = torch.load(path)
+        data = torch.load(path, weights_only=False)
         vocab = cls(max_size=data['max_size'], min_freq=data['min_freq'])
         vocab.token2idx = data['token2idx']
         vocab.idx2token = data['idx2token']
@@ -303,7 +303,15 @@ class IMDBDataModule:
         )
         
     def _load_split(self, split: str) -> Tuple[List[str], List[int]]:
-        """Load a data split using torchtext."""
+        """Load a data split from local files, torchtext, or HuggingFace."""
+        
+        # Try loading from local Stanford IMDB files first
+        local_path = self.data_dir / "aclImdb" / split
+        if local_path.exists():
+            print(f"Loading {split} from local files: {local_path}")
+            return self._load_from_local(local_path)
+        
+        # Try torchtext
         try:
             from torchtext.datasets import IMDB
             
@@ -319,9 +327,50 @@ class IMDBDataModule:
             return texts, labels
             
         except Exception as e:
-            print(f"Error loading {split} split: {e}")
-            # Return dummy data for testing
-            return self._get_dummy_data()
+            print(f"Error loading {split} split with torchtext: {e}")
+        
+        # Try HuggingFace datasets as fallback
+        try:
+            from datasets import load_dataset
+            print(f"Trying HuggingFace datasets for {split}...")
+            
+            dataset = load_dataset("imdb", split=split)
+            
+            texts = dataset["text"]
+            labels = dataset["label"]  # Already 0/1 in HuggingFace
+            
+            return list(texts), list(labels)
+            
+        except Exception as e:
+            print(f"Error loading {split} split with HuggingFace: {e}")
+            
+        # Return dummy data for testing
+        print("Using dummy data for testing.")
+        return self._get_dummy_data()
+    
+    def _load_from_local(self, split_path: Path) -> Tuple[List[str], List[int]]:
+        """Load data from local Stanford IMDB directory structure."""
+        texts = []
+        labels = []
+        
+        # Load positive reviews
+        pos_path = split_path / "pos"
+        if pos_path.exists():
+            for file_path in sorted(pos_path.glob("*.txt")):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    texts.append(f.read())
+                    labels.append(1)  # Positive
+        
+        # Load negative reviews  
+        neg_path = split_path / "neg"
+        if neg_path.exists():
+            for file_path in sorted(neg_path.glob("*.txt")):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    texts.append(f.read())
+                    labels.append(0)  # Negative
+        
+        print(f"  Loaded {len(texts)} reviews ({labels.count(1)} pos, {labels.count(0)} neg)")
+        return texts, labels
     
     def _get_dummy_data(self) -> Tuple[List[str], List[int]]:
         """Generate dummy data for testing when IMDB unavailable."""
@@ -354,7 +403,7 @@ class IMDBDataModule:
             shuffle=True,
             collate_fn=collate_fn,
             num_workers=0,
-            pin_memory=True
+            pin_memory=torch.cuda.is_available()
         )
     
     def test_dataloader(self) -> DataLoader:
@@ -365,7 +414,7 @@ class IMDBDataModule:
             shuffle=False,
             collate_fn=collate_fn,
             num_workers=0,
-            pin_memory=True
+            pin_memory=torch.cuda.is_available()
         )
 
 

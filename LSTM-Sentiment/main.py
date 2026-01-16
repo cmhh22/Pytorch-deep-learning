@@ -6,10 +6,8 @@ Train an LSTM model for binary sentiment classification on IMDB movie reviews.
 Usage:
     python main.py                          # Train with default settings
     python main.py --epochs 10 --lr 0.001   # Custom training
+    python main.py --attention              # Train with attention mechanism
     python main.py --evaluate               # Evaluate saved model
-    
-Author: cmhh22
-Date: December 2025
 """
 
 import argparse
@@ -148,7 +146,7 @@ def main():
     
     # Learning rate scheduler
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode='min', factor=0.5, patience=1, verbose=True
+        optimizer, mode='min', factor=0.5, patience=1
     )
     
     # =========================================================================
@@ -159,7 +157,7 @@ def main():
         print("\n📊 Evaluating Model...")
         
         if os.path.exists(args.checkpoint):
-            checkpoint = torch.load(args.checkpoint, map_location=device)
+            checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
             model.load_state_dict(checkpoint['model_state_dict'])
             print(f"✓ Loaded checkpoint from {args.checkpoint}")
         else:
@@ -225,29 +223,64 @@ def main():
         print("="*60)
 
 
-def predict_sentiment(text: str, model_path: str = './models/lstm_sentiment_best.pth'):
+def predict_sentiment(
+    text: str,
+    model: nn.Module = None,
+    vocab = None,
+    model_path: str = './models/lstm_sentiment_best.pth',
+    device: torch.device = None
+) -> dict:
     """
     Predict sentiment for a single text.
     
     Args:
         text: Input text to classify
-        model_path: Path to saved model
+        model: Pre-loaded model (optional)
+        vocab: Pre-loaded vocabulary (optional)
+        model_path: Path to saved model checkpoint
+        device: Device for inference
         
     Returns:
-        dict with prediction and confidence
+        dict with prediction, confidence, and tokens
     """
     from src.data import preprocess_text, tokenize, Vocabulary
     
-    device = get_device()
+    if device is None:
+        device = get_device()
     
-    # Load checkpoint
-    checkpoint = torch.load(model_path, map_location=device)
-    args = checkpoint.get('args', {})
+    # Preprocess and tokenize
+    processed = preprocess_text(text)
+    tokens = tokenize(processed)
     
-    # This is simplified - in production, you'd save/load the vocabulary
-    print("Note: For proper inference, vocabulary should be saved and loaded.")
+    if model is None or vocab is None:
+        print("Note: For proper inference, pass a pre-loaded model and vocabulary.")
+        print("Use IMDBDataModule to build vocabulary from training data.")
+        return {
+            "prediction": "Unknown",
+            "confidence": 0.0,
+            "tokens": tokens,
+            "error": "Model or vocabulary not provided"
+        }
     
-    return {"prediction": "Positive/Negative", "confidence": 0.0}
+    # Encode tokens
+    encoded = vocab.encode(tokens)
+    
+    # Predict
+    model.eval()
+    with torch.no_grad():
+        x = torch.tensor([encoded], dtype=torch.long).to(device)
+        output = model(x)
+        probs = torch.softmax(output, dim=1)
+        pred_idx = output.argmax(dim=1).item()
+        confidence = probs[0][pred_idx].item()
+    
+    sentiment = "Positive" if pred_idx == 1 else "Negative"
+    
+    return {
+        "prediction": sentiment,
+        "confidence": confidence,
+        "tokens": tokens
+    }
 
 
 if __name__ == "__main__":

@@ -84,6 +84,9 @@ dmypy.json
 # Project-specific ignores
 # ============================================
 
+# LSTM-Sentiment docs (personal notes, not for public)
+LSTM-Sentiment/docs/
+
 # Dataset (auto-downloaded, large files)
 data/
 !data/.gitkeep

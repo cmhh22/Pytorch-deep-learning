@@ -80,7 +80,7 @@ Pytorch-deep-learning/
 - Understand transfer learning
 - Apply pretrained models to new tasks
 
-### 3️⃣ Learn LSTM-Sentiment
+### 3️⃣ Learn LSTM-Sentiment ✅
 - Understand recurrent neural networks
 - Learn sequence modeling with LSTMs
 - Implement attention mechanisms for interpretability

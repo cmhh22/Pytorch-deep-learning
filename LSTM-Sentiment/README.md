@@ -11,7 +11,7 @@
 This project implements a **Long Short-Term Memory (LSTM)** neural network for binary sentiment classification (positive/negative) on movie reviews. It demonstrates:
 
 - Text preprocessing and tokenization
-- Word embeddings (GloVe pretrained + trainable)
+- Trainable word embeddings
 - Bidirectional LSTM architecture
 - Attention mechanism for interpretability
 - PyTorch best practices
@@ -29,7 +29,7 @@ LSTM-Sentiment/
 │   ├── __init__.py
 │   └── lstm.py          # LSTM model architecture
 ├── notebooks/
-│   └── sentiment_analysis.ipynb  # Interactive tutorial
+│   └── sentiment_analysis.ipynb  # Interactive tutorial (Colab compatible)
 └── src/
     ├── __init__.py
     ├── data.py          # Data loading and preprocessing
@@ -43,8 +43,8 @@ LSTM-Sentiment/
 
 ```bash
 # Clone the repository
-git clone https://github.com/cmhh22/Pytorch-deep-learning.git
-cd Pytorch-deep-learning/LSTM-Sentiment
+git clone https://github.com/yourusername/pytorch-deep-learning.git
+cd pytorch-deep-learning/LSTM-Sentiment
 
 # Create virtual environment (recommended)
 python -m venv venv
@@ -63,6 +63,9 @@ python main.py
 
 # Train with custom parameters
 python main.py --epochs 10 --batch_size 64 --lr 0.001 --hidden_dim 256
+
+# Train with attention mechanism
+python main.py --attention
 ```
 
 ### Quick Test
@@ -72,6 +75,14 @@ python main.py --epochs 10 --batch_size 64 --lr 0.001 --hidden_dim 256
 python test_quick.py
 ```
 
+### Google Colab
+
+The notebook `notebooks/sentiment_analysis.ipynb` is **fully standalone** and works in Google Colab without uploading any files. It will:
+- Auto-install dependencies
+- Download the IMDB dataset from HuggingFace
+- Train the model
+- Auto-download the trained `.pth` file when finished
+
 ## 📊 Model Architecture
 
 ```
@@ -80,7 +91,7 @@ Input Text
     ▼
 ┌─────────────────┐
 │   Embedding     │  (vocab_size × embed_dim)
-│   (GloVe 100d)  │
+│   (Trainable)   │
 └────────┬────────┘
          │
          ▼
@@ -105,21 +116,23 @@ Input Text
     Output (pos/neg)
 ```
 
-## 📈 Results
+## 📈 Expected Results
 
 | Metric | Value |
 |--------|-------|
-| Accuracy | ~88% |
-| F1-Score | ~0.88 |
-| Training Time | ~15 min (GPU) |
+| Accuracy | ~85-88% |
+| F1-Score | ~0.85-0.88 |
+| Training Time | ~5-15 min (GPU) |
+
+*Results may vary depending on hyperparameters and training epochs.*
 
 ## 🎯 Features
 
-- **Pretrained Embeddings**: Uses GloVe 100d vectors for better semantic understanding
+- **Trainable Embeddings**: Word embeddings learned during training
 - **Bidirectional LSTM**: Captures context from both directions
 - **Attention Mechanism**: Highlights important words for prediction
 - **Early Stopping**: Prevents overfitting with patience-based stopping
-- **Mixed Precision**: Optional FP16 training for faster computation
+- **Colab Compatible**: Notebook runs standalone in Google Colab
 
 ## 📚 Dataset
 
@@ -128,7 +141,7 @@ Input Text
 - 25,000 test samples
 - Binary labels: positive (1) / negative (0)
 
-The dataset is automatically downloaded via `torchtext` on first run.
+The dataset is automatically downloaded from **HuggingFace Datasets** on first run.
 
 ## 🔧 Hyperparameters
 
@@ -141,6 +154,8 @@ The dataset is automatically downloaded via `torchtext` on first run.
 | `batch_size` | 32 | Batch size |
 | `lr` | 0.001 | Learning rate |
 | `epochs` | 5 | Training epochs |
+| `max_vocab` | 25000 | Maximum vocabulary size |
+| `max_len` | 256 | Maximum sequence length |
 
 ## 📖 Learning Resources
 
@@ -148,14 +163,10 @@ The dataset is automatically downloaded via `torchtext` on first run.
 - [PyTorch Seq2Seq Tutorial](https://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html)
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit PRs.
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
 
 ---
 
-**Part of the [PyTorch Deep Learning Portfolio](https://github.com/cmhh22/Pytorch-deep-learning)**
+**Part of the PyTorch Deep Learning Portfolio**
