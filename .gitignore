@@ -84,16 +84,13 @@ dmypy.json
 # Project-specific ignores
 # ============================================
 
-# LSTM-Sentiment docs (personal notes, not for public)
-LSTM-Sentiment/docs/
-
 # Dataset (auto-downloaded, large files)
 data/
 !data/.gitkeep
 
-# Model checkpoints (large files)
-models/*.pth
-models/*.pt
+# Model checkpoints (large files - too big for GitHub)
+**/*.pth
+**/*.pt
 !models/__init__.py
 !models/model.py
 
